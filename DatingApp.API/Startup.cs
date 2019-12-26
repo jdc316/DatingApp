@@ -25,6 +25,7 @@ namespace DatingApp.API
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
+            services.AddCors();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
@@ -49,11 +50,16 @@ namespace DatingApp.API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
+
             //for use with angular we can specify with origins to ensure only the angular app can access this
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+
+
 
             app.UseEndpoints(endpoints =>
             {
