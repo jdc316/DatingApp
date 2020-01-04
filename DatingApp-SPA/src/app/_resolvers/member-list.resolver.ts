@@ -17,6 +17,6 @@ export class MemberListResolver implements Resolve<User[]> {
                 this.router.navigate(['/']);
                 return of(null);
             })
-        )
+        );
     }
 }
