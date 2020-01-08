@@ -34,6 +34,7 @@ namespace DatingApp.API
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddTransient<Seed>();
             services.AddScoped<IAuthRepository, AuthRepository>();
@@ -85,9 +86,6 @@ namespace DatingApp.API
 
             //for use with angular we can specify with origins to ensure only the angular app can access this
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-
-
 
             app.UseEndpoints(endpoints =>
             {
