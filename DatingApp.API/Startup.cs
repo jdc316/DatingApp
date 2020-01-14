@@ -25,10 +25,21 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            ConfigureServices(services);
+        }
+
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            ConfigureServices(services);
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllers().AddNewtonsoftJson(opt =>
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -75,9 +86,12 @@ namespace DatingApp.API
                         }
                     });
                 });
+                app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+
+            //app.UseDeveloperExceptionPage();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -88,9 +102,13 @@ namespace DatingApp.API
             //for use with angular we can specify with origins to ensure only the angular app can access this
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
